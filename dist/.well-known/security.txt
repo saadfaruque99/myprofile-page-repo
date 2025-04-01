@@ -1,0 +1,6 @@
+# Security Contact Information
+Contact: mailto:faruque@gmail.com
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: en
+Policy: https://myprofile-page-repo.pages.dev/security-policy
+Hiring: https://myprofile-page-repo.pages.dev/#experience 
