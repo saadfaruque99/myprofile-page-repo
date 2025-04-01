@@ -1,5 +1,3 @@
-import React from 'react';
-import './App.css';
 import Profile from './components/Profile';
 import styles from './App.module.css';
 
@@ -11,7 +9,7 @@ function App() {
     { id: 'certifications', label: 'Certifications' }
   ];
 
-  const scrollToSection = (id) => {
+  const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -41,4 +39,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 

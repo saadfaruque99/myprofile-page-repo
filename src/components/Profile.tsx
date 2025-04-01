@@ -1,11 +1,28 @@
 import React from 'react';
 import styles from './Profile.module.css';
-// Import the profile image
 import profileImage from '../images/saad_profile.jpg';
 
-const Profile = () => {
-  // Extracting data to make it easier to manage
-  const profileData = {
+interface ExperienceSummary {
+  role: string;
+  period: string;
+  highlights: string;
+}
+
+interface ProfileData {
+  name: string;
+  title: string;
+  location: string;
+  linkedin: string;
+  summary: string;
+  expertise: string[];
+  technicalSkills: string[];
+  experienceSummary: ExperienceSummary[];
+  certificationsSummary: string;
+  publicationsSummary: string;
+}
+
+const Profile: React.FC = () => {
+  const profileData: ProfileData = {
     name: "SAAD FARUQUE",
     title: "Chief Information Officer | Cyber Security Expert",
     location: "Dhaka, Bangladesh",
@@ -47,11 +64,7 @@ const Profile = () => {
       <div className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.profileImage}>
-            {/* Using your uploaded profile image */}
-            <img 
-              src={profileImage} 
-              alt={profileData.name} 
-            />
+            <img src={profileImage} alt={profileData.name} />
           </div>
           <h1>{profileData.name}</h1>
           <p className={styles.title}>{profileData.title}</p>
