@@ -1,0 +1,64 @@
+.app {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #3b82f6;
+  cursor: pointer;
+}
+
+.menu {
+  display: flex;
+  gap: 2rem;
+}
+
+.menuItem {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #4b5563;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: color 0.2s ease;
+}
+
+.menuItem:hover {
+  color: #3b82f6;
+}
+
+.main {
+  padding-top: 64px; /* Same as navbar height */
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+  }
+  
+  .menu {
+    gap: 1rem;
+  }
+  
+  .menuItem {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+} 
