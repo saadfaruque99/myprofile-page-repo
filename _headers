@@ -1,7 +1,17 @@
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'
+  # Content Security Policy (CSP)
+  # default-src: Fallback for other resource types
+  # script-src: Controls JavaScript sources
+  # style-src: Controls CSS sources
+  # img-src: Controls image sources
+  # font-src: Controls font sources
+  # connect-src: Controls AJAX, WebSocket, and EventSource connections
+  # frame-ancestors: Controls embedding of the page in iframes
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'
+  
+  # Other Security Headers
   Strict-Transport-Security: max-age=2592000; includeSubDomains
-  X-Frame-Options: SAMEORIGIN
+  X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
