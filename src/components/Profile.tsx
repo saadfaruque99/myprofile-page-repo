@@ -64,7 +64,13 @@ const Profile: React.FC = () => {
       <div className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.profileImage}>
-            <img src={profileImage} alt={profileData.name} />
+            <img 
+              src={profileImage} 
+              alt={profileData.name} 
+              loading="lazy"
+              decoding="async"
+              crossOrigin="anonymous"
+            />
           </div>
           <h1>{profileData.name}</h1>
           <p className={styles.title}>{profileData.title}</p>
