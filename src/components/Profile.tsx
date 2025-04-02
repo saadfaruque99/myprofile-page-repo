@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
     name: "SAAD FARUQUE",
     title: "Chief Information Officer | Cyber Security Expert",
     location: "Dhaka, Bangladesh",
-    linkedin: "https://www.linkedin.com/in/saadfaruque-67b6524",
+    linkedin: "https://www.linkedin.com/in/saad-faruque-67b6524/",
     summary: `Seasoned technology leader with 25+ years of experience in IT management, systems integration, and cyber security. Proven track record of building scalable, secure infrastructure for diverse organizations. Expert in leveraging innovative technology approaches to achieve business objectives while maintaining robust security postures.`,
     expertise: [
       "Information Security - Policy Development, Risk Management, Compliance",
