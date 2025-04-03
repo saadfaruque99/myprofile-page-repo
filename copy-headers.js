@@ -1,30 +1,46 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { copyFile, mkdir } from 'node:fs/promises';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-// Copy _headers file to dist directory
-const rootHeadersPath = path.join(__dirname, '_headers');
-const destHeadersPath = path.join(__dirname, 'dist', '_headers');
+async function copyHeaders() {
+  try {
+    const sourceFile = join(__dirname, '_headers');
+    const targetFile = join(__dirname, 'dist', '_headers');
+    
+    await copyFile(sourceFile, targetFile);
+    console.log('Successfully copied _headers file to dist directory');
+    
+    // Also copy _headers from public directory if it exists
+    try {
+      const publicSourceFile = join(__dirname, 'public', '_headers');
+      await copyFile(publicSourceFile, targetFile);
+      console.log('Successfully copied public/_headers file to dist directory');
+    } catch (error) {
+      // If the file doesn't exist, just continue
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+    }
 
-try {
-  // Create dist directory if it doesn't exist
-  if (!fs.existsSync(path.join(__dirname, 'dist'))) {
-    fs.mkdirSync(path.join(__dirname, 'dist'), { recursive: true });
+    // Copy blogposts directory to dist
+    const { cpSync } = await import('node:fs');
+    try {
+      cpSync(
+        join(__dirname, 'public', 'blogposts'),
+        join(__dirname, 'dist', 'blogposts'),
+        { recursive: true, force: true }
+      );
+      console.log('Successfully copied blogposts directory to dist');
+    } catch (error) {
+      console.error('Error copying blogposts directory:', error);
+    }
+  } catch (error) {
+    console.error('Error copying _headers file:', error);
+    process.exit(1);
   }
-  
-  // Copy _headers file
-  fs.copyFileSync(rootHeadersPath, destHeadersPath);
-  console.log('Successfully copied _headers file to dist directory');
-  
-  // Also copy from public directory if it exists
-  const publicHeadersPath = path.join(__dirname, 'public', '_headers');
-  if (fs.existsSync(publicHeadersPath)) {
-    fs.copyFileSync(publicHeadersPath, destHeadersPath);
-    console.log('Successfully copied public/_headers file to dist directory');
-  }
-} catch (error) {
-  console.error('Error copying headers file:', error);
-} 
+}
+
+copyHeaders(); 

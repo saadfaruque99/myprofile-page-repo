@@ -1,138 +1,258 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import styles from './BlogPost.module.css';
+import MarkdownRenderer from './MarkdownRenderer';
+import { loadMarkdownPost, getNextAndPreviousPosts, getPostsBySeriesId } from '../utils/markdownLoader';
+import { allBlogPosts, llmEcosystemSeries } from '../data/blogSeries';
 
-interface BlogPost {
-  id: number;
-  title: string;
-  date: string;
-  excerpt: string;
-  category: string;
-  readTime: string;
-  image?: string;
-  content: string;
-  author: {
-    name: string;
-    title: string;
-    image: string;
-  };
-}
-
-const BlogPost: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const BlogPostComponent: React.FC = () => {
+  const { postId } = useParams<{ postId: string }>();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [markdown, setMarkdown] = useState<{ content: string; meta: any } | null>(null);
   
-  // In a real app, this would come from an API or database
-  const post: BlogPost = {
-    id: 1,
-    title: "The Future of Cybersecurity in Enterprise IT",
-    date: "March 15, 2024",
-    excerpt: "Exploring emerging trends and challenges in enterprise cybersecurity, with insights on AI-driven security solutions and zero-trust architecture.",
-    category: "Cybersecurity",
-    readTime: "5 min read",
-    image: "https://via.placeholder.com/800x450?text=Cybersecurity",
-    content: `
-      <h2>Introduction</h2>
-      <p>The landscape of enterprise cybersecurity is evolving at an unprecedented pace. As organizations increasingly rely on digital infrastructure, the need for robust security measures has never been more critical. This article explores the emerging trends and challenges in enterprise cybersecurity, focusing on AI-driven solutions and zero-trust architecture.</p>
+  // Get next/previous posts in the series
+  const { next, previous } = postId ? getNextAndPreviousPosts(postId) : { next: null, previous: null };
+  
+  // Get other posts in the same series
+  const [seriesPosts, setSeriesPosts] = useState<typeof allBlogPosts>([]);
+  
+  // Get the latest posts
+  const [latestPosts, setLatestPosts] = useState<typeof allBlogPosts>([]);
 
-      <h2>AI-Driven Security Solutions</h2>
-      <p>Artificial Intelligence is revolutionizing cybersecurity by enabling:</p>
-      <ul>
-        <li>Real-time threat detection and response</li>
-        <li>Predictive analytics for potential vulnerabilities</li>
-        <li>Automated incident response systems</li>
-        <li>Behavioral analysis for anomaly detection</li>
-      </ul>
-
-      <h2>Zero-Trust Architecture</h2>
-      <p>The traditional perimeter-based security model is no longer sufficient. Zero-trust architecture operates on the principle of "never trust, always verify," implementing:</p>
-      <ul>
-        <li>Micro-segmentation of networks</li>
-        <li>Continuous authentication</li>
-        <li>Least-privilege access controls</li>
-        <li>End-to-end encryption</li>
-      </ul>
-
-      <h2>Emerging Challenges</h2>
-      <p>While these technologies offer significant advantages, they also present new challenges:</p>
-      <ul>
-        <li>Integration with existing systems</li>
-        <li>Skills gap in cybersecurity workforce</li>
-        <li>Regulatory compliance requirements</li>
-        <li>Cost of implementation and maintenance</li>
-      </ul>
-
-      <h2>Best Practices for Implementation</h2>
-      <p>To successfully implement these new security measures, organizations should:</p>
-      <ol>
-        <li>Conduct thorough risk assessments</li>
-        <li>Develop a phased implementation strategy</li>
-        <li>Invest in employee training and awareness</li>
-        <li>Regularly update and test security measures</li>
-        <li>Maintain compliance with industry standards</li>
-      </ol>
-
-      <h2>Conclusion</h2>
-      <p>The future of enterprise cybersecurity lies in the intelligent integration of AI-driven solutions and zero-trust architecture. While challenges exist, the benefits of enhanced security, reduced risk, and improved operational efficiency make these investments crucial for modern organizations.</p>
-    `,
-    author: {
-      name: "Saad Faruque",
-      title: "Chief Information Officer | Cyber Security Expert",
-      image: "https://via.placeholder.com/100x100?text=SF"
+  // Check if this post is part of the LLM Ecosystem series
+  const isLlmEcosystemPost = useMemo(() => {
+    if (!postId) return false;
+    return llmEcosystemSeries.posts.some(post => post.id === postId);
+  }, [postId]);
+  
+  useEffect(() => {
+    if (!postId) {
+      navigate('/blog');
+      return;
     }
-  };
-
+    
+    const fetchMarkdown = async () => {
+      setLoading(true);
+      try {
+        const post = await loadMarkdownPost(postId);
+        if (post) {
+          setMarkdown(post);
+          
+          // Get all posts in the same series
+          if (post.meta.series) {
+            console.log("Found series:", post.meta.series);
+            const seriesId = post.meta.series.toLowerCase().replace(/\s+/g, '-');
+            console.log("Series ID for lookup:", seriesId);
+            
+            // Get all posts in the series, sorted by chapter number
+            const postsInSeries = getPostsBySeriesId(seriesId).sort((a, b) => {
+              if (a.chapter !== undefined && b.chapter !== undefined) {
+                return a.chapter - b.chapter;
+              }
+              return 0;
+            });
+            
+            console.log("Found series posts:", postsInSeries.length);
+            setSeriesPosts(postsInSeries);
+          } else {
+            console.log("No series metadata found for this post");
+            
+            // If post is in the LLM Ecosystem series but doesn't have series metadata
+            if (isLlmEcosystemPost) {
+              console.log("Post is in LLM Ecosystem series");
+              setSeriesPosts(llmEcosystemSeries.posts.sort((a, b) => {
+                if (a.chapter !== undefined && b.chapter !== undefined) {
+                  return a.chapter - b.chapter;
+                }
+                return 0;
+              }));
+            }
+          }
+          
+          // Get latest posts
+          const latest = [...allBlogPosts]
+            .filter(p => p.id !== postId)
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 10);
+          setLatestPosts(latest);
+          
+          setError(null);
+        } else {
+          setError('Post not found');
+          setMarkdown(null);
+        }
+      } catch (err) {
+        console.error('Error loading post:', err);
+        setError('Failed to load post');
+        setMarkdown(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchMarkdown();
+  }, [postId, navigate, isLlmEcosystemPost]);
+  
+  // Even if no series posts are found for some reason, use LLM Ecosystem posts for LLM posts
+  useEffect(() => {
+    if (isLlmEcosystemPost && seriesPosts.length === 0) {
+      console.log("Fallback: Using LLM Ecosystem series posts");
+      setSeriesPosts(llmEcosystemSeries.posts.sort((a, b) => {
+        if (a.chapter !== undefined && b.chapter !== undefined) {
+          return a.chapter - b.chapter;
+        }
+        return 0;
+      }));
+    }
+  }, [isLlmEcosystemPost, seriesPosts.length]);
+  
+  if (loading) {
+    return <div className={styles.loading}>Loading post...</div>;
+  }
+  
+  if (error || !markdown) {
+    return <div className={styles.error}>{error || 'Post not found'}</div>;
+  }
+  
+  const { content, meta } = markdown;
+  const seriesTitle = meta.series || (isLlmEcosystemPost ? llmEcosystemSeries.title : '');
+  
   return (
-    <article className={styles.blogPost}>
-      <header className={styles.header}>
-        <div className={styles.meta}>
-          <span className={styles.category}>{post.category}</span>
-          <span className={styles.date}>{post.date}</span>
-          <span className={styles.readTime}>{post.readTime}</span>
+    <div className={styles.blogPostContainer}>
+      <article className={styles.blogPost}>
+        <header className={styles.header}>
+          <div className={styles.meta}>
+            <span className={styles.category}>{meta.category}</span>
+            <span className={styles.date}>{meta.date}</span>
+            <span className={styles.readTime}>{meta.readTime}</span>
+            {meta.series && <span className={styles.series}>Series: {meta.series}</span>}
+            {meta.chapter !== undefined && <span className={styles.chapter}>Chapter {meta.chapter}</span>}
+          </div>
+          <h1>{meta.title}</h1>
+          <div className={styles.author}>
+            <img src="https://via.placeholder.com/100x100?text=SF" alt="Saad Faruque" />
+            <div>
+              <h3>Saad Faruque</h3>
+              <p>Chief Information Officer | Cyber Security Expert</p>
+            </div>
+          </div>
+        </header>
+
+        {meta.image && (
+          <div className={styles.featuredImage}>
+            <img 
+              src={meta.image} 
+              alt={meta.title}
+              loading="lazy"
+              decoding="async"
+              crossOrigin="anonymous"
+            />
+          </div>
+        )}
+
+        <div className={styles.content}>
+          <MarkdownRenderer content={content} />
         </div>
-        <h1>{post.title}</h1>
-        <div className={styles.author}>
-          <img src={post.author.image} alt={post.author.name} />
-          <div>
-            <h3>{post.author.name}</h3>
-            <p>{post.author.title}</p>
+
+        <footer className={styles.footer}>
+          <div className={styles.tags}>
+            <span>Tags:</span>
+            <a href={`/blog?category=${meta.category}`}>{meta.category}</a>
+            {seriesTitle && <a href={`/blog?series=${encodeURIComponent(seriesTitle)}`}>{seriesTitle}</a>}
+          </div>
+          <div className={styles.share}>
+            <span>Share:</span>
+            <a href="#" className={styles.socialLink}>Twitter</a>
+            <a href="#" className={styles.socialLink}>LinkedIn</a>
+            <a href="#" className={styles.socialLink}>Email</a>
+          </div>
+        </footer>
+        
+        <div className={styles.navigation}>
+          {previous && (
+            <Link to={`/blog/${previous.id}`} className={styles.prevPost}>
+              <span>← Previous</span>
+              <span>{previous.title}</span>
+            </Link>
+          )}
+          {next && (
+            <Link to={`/blog/${next.id}`} className={styles.nextPost}>
+              <span>Next →</span>
+              <span>{next.title}</span>
+            </Link>
+          )}
+        </div>
+      </article>
+
+      <aside className={styles.sidebar}>
+        {/* Series Navigation Menu - Always displayed prominently at the top */}
+        {(seriesPosts.length > 0 || isLlmEcosystemPost) && (
+          <div className={`${styles.sidebarSection} ${styles.seriesNavigation}`}>
+            <h3>Complete "{seriesTitle}" Series</h3>
+            <div className={styles.seriesIndex}>
+              {(seriesPosts.length > 0 ? seriesPosts : llmEcosystemSeries.posts).map(seriesPost => (
+                <Link 
+                  key={seriesPost.id} 
+                  to={`/blog/${seriesPost.id}`}
+                  className={`${styles.seriesIndexItem} ${seriesPost.id === postId ? styles.currentPost : ''}`}
+                >
+                  <div className={styles.chapterNumber}>
+                    {seriesPost.chapter !== undefined ? `Ch ${seriesPost.chapter}` : '•'}
+                  </div>
+                  <div className={styles.chapterTitle}>
+                    {seriesPost.title}
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className={styles.seriesNavHint}>
+              Click any chapter above to navigate through the series
+            </div>
+          </div>
+        )}
+
+        <div className={styles.sidebarSection}>
+          <h3>Latest Articles</h3>
+          <ul className={styles.postList}>
+            {latestPosts.map(latestPost => (
+              <li key={latestPost.id}>
+                <Link to={`/blog/${latestPost.id}`} className={styles.sidebarLink}>
+                  <div className={styles.sidebarPostImage}>
+                    <img 
+                      src={latestPost.image} 
+                      alt={latestPost.title}
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className={styles.sidebarPostContent}>
+                    <h4>{latestPost.title}</h4>
+                    <span className={styles.sidebarPostDate}>{latestPost.date}</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className={styles.sidebarSection}>
+          <h3>Categories</h3>
+          <div className={styles.categoryList}>
+            {Array.from(new Set(allBlogPosts.map(p => p.category))).map(category => (
+              <Link 
+                key={category} 
+                to={`/blog?category=${category}`} 
+                className={styles.categoryTag}
+              >
+                {category}
+              </Link>
+            ))}
           </div>
         </div>
-      </header>
-
-      {post.image && (
-        <div className={styles.featuredImage}>
-          <img 
-            src={post.image} 
-            alt={post.title}
-            loading="lazy"
-            decoding="async"
-            crossOrigin="anonymous"
-          />
-        </div>
-      )}
-
-      <div 
-        className={styles.content}
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      />
-
-      <footer className={styles.footer}>
-        <div className={styles.tags}>
-          <span>Tags:</span>
-          <a href="#">Cybersecurity</a>
-          <a href="#">Enterprise IT</a>
-          <a href="#">AI</a>
-          <a href="#">Zero Trust</a>
-        </div>
-        <div className={styles.share}>
-          <span>Share:</span>
-          <a href="#" className={styles.socialLink}>Twitter</a>
-          <a href="#" className={styles.socialLink}>LinkedIn</a>
-          <a href="#" className={styles.socialLink}>Email</a>
-        </div>
-      </footer>
-    </article>
+      </aside>
+    </div>
   );
 };
 
-export default BlogPost; 
+export default BlogPostComponent; 

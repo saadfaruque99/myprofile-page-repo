@@ -110,4 +110,27 @@
   .blogImage {
     height: 180px;
   }
+}
+
+.viewAllContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.viewAll {
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #333;
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.viewAll:hover {
+  background-color: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 } 

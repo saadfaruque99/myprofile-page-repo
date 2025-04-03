@@ -1,53 +1,32 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import Home from './components/Home';
 import Profile from './components/Profile';
-import Blog from './components/Blog';
+import BlogIndex from './components/BlogIndex';
 import BlogPost from './components/BlogPost';
+import About from './components/About';
+import Contact from './components/Contact';
+import ScrollToTop from './components/ScrollToTop';
 import styles from './App.module.css';
 
 function App() {
-  const menuItems = [
-    { id: 'summary', label: 'About' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'experience', label: 'Experience' },
-    { id: 'certifications', label: 'Certifications' },
-    { id: 'blog', label: 'Blog' }
-  ];
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <Router>
+      <ScrollToTop />
       <div className={styles.app}>
-        <nav className={styles.navbar}>
-          <div className={styles.logo}>SF</div>
-          <div className={styles.menu}>
-            {menuItems.map(item => (
-              <button
-                key={item.id}
-                className={styles.menuItem}
-                onClick={() => scrollToSection(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </nav>
+        <Header />
         <main className={styles.main}>
           <Routes>
-            <Route path="/" element={
-              <>
-                <Profile />
-                <Blog />
-              </>
-            } />
-            <Route path="/blog/:id" element={<BlogPost />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/blog" element={<BlogIndex />} />
+            <Route path="/blog/:postId" element={<BlogPost />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </Router>
   );
