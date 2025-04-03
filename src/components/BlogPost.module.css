@@ -1,0 +1,150 @@
+.blogPost {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.category {
+  background-color: #e5e7eb;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.header h1 {
+  color: #1f2937;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.author img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author h3 {
+  color: #1f2937;
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+.author p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.featuredImage {
+  width: 100%;
+  height: 450px;
+  margin-bottom: 2rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.featuredImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content {
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+.content h2 {
+  color: #1f2937;
+  font-size: 1.75rem;
+  margin: 2rem 0 1rem;
+}
+
+.content p {
+  margin-bottom: 1.5rem;
+}
+
+.content ul, .content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.content li {
+  margin-bottom: 0.5rem;
+}
+
+.footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.tags, .share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tags span, .share span {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.tags a, .socialLink {
+  color: #3b82f6;
+  text-decoration: none;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  background-color: #eff6ff;
+  transition: background-color 0.3s ease;
+}
+
+.tags a:hover, .socialLink:hover {
+  background-color: #dbeafe;
+}
+
+@media (max-width: 768px) {
+  .blogPost {
+    padding: 1.5rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .featuredImage {
+    height: 300px;
+  }
+
+  .content h2 {
+    font-size: 1.5rem;
+  }
+} 

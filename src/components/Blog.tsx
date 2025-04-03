@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './Blog.module.css';
 
 interface BlogPost {
@@ -67,7 +68,9 @@ const Blog: React.FC = () => {
               </div>
               <h3>{post.title}</h3>
               <p>{post.excerpt}</p>
-              <a href="#" className={styles.readMore}>Read More →</a>
+              <Link to={`/blog/${post.id}`} className={styles.readMore}>
+                Read More →
+              </Link>
             </div>
           </article>
         ))}
