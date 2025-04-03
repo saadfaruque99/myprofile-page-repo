@@ -1,4 +1,5 @@
 import Profile from './components/Profile';
+import Blog from './components/Blog';
 import styles from './App.module.css';
 
 function App() {
@@ -6,7 +7,8 @@ function App() {
     { id: 'summary', label: 'About' },
     { id: 'skills', label: 'Skills' },
     { id: 'experience', label: 'Experience' },
-    { id: 'certifications', label: 'Certifications' }
+    { id: 'certifications', label: 'Certifications' },
+    { id: 'blog', label: 'Blog' }
   ];
 
   const scrollToSection = (id: string) => {
@@ -34,6 +36,7 @@ function App() {
       </nav>
       <main className={styles.main}>
         <Profile />
+        <Blog />
       </main>
     </div>
   );
