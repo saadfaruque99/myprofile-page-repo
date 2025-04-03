@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Contact.module.css';
+import SEO from './SEO';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -34,6 +35,13 @@ const Contact: React.FC = () => {
   
   return (
     <div className={styles.contact}>
+      <SEO 
+        title="Contact Me"
+        description="Get in touch with Saad Faruque for job opportunities, speaking engagements, consulting services, or just to connect about technology and cybersecurity."
+        keywords="Contact Saad Faruque, CIO Contact, IT Consulting, Speaking Engagements, Technology Leadership"
+        canonical="https://saadfaruque.com/contact"
+      />
+      
       <div className={styles.container}>
         <h1>Contact Me</h1>
         

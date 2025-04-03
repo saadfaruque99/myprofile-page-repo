@@ -1,9 +1,16 @@
 import React from 'react';
 import styles from './About.module.css';
+import SEO from './SEO';
 
 const About: React.FC = () => {
   return (
     <div className={styles.about}>
+      <SEO 
+        title="About Me"
+        description="Learn about Saad Faruque - Chief Information Officer & Cybersecurity Expert with 15+ years of experience in enterprise IT architecture, security, and digital transformation."
+        keywords="Saad Faruque, CIO, Chief Information Officer, Cybersecurity Expert, Enterprise Architecture, Digital Transformation, Technology Leadership"
+        canonical="https://saadfaruque.com/about"
+      />
       <div className={styles.container}>
         <h1>About Me</h1>
         <div className={styles.content}>

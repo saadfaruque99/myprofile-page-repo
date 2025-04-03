@@ -5,14 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && node copy-headers.js",
+    "build": "npm run generate-sitemap && tsc && vite build && node copy-headers.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate-sitemap": "node scripts/generate-sitemap.js"
   },
   "dependencies": {
+    "@types/react-helmet": "^6.1.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "react-helmet-async": "^2.0.5",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^6.16.0",
     "rehype-raw": "^7.0.0",
@@ -28,6 +32,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "gray-matter": "^4.0.3",
     "typescript": "^5.2.2",
     "vite": "^6.2.4"
   }

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import styles from './BlogPost.module.css';
 import MarkdownRenderer from './MarkdownRenderer';
+import SEO from './SEO';
 import { loadMarkdownPost, getNextAndPreviousPosts, getPostsBySeriesId } from '../utils/markdownLoader';
 import { allBlogPosts, llmEcosystemSeries } from '../data/blogSeries';
 
@@ -121,6 +122,17 @@ const BlogPostComponent: React.FC = () => {
   
   return (
     <div className={styles.blogPostContainer}>
+      {/* Add SEO component with dynamic metadata */}
+      <SEO 
+        title={meta.title}
+        description={meta.summary || `${meta.title} - Learn about ${meta.title} in this detailed article by Saad Faruque, covering key aspects of ${meta.category || 'technology'}.`}
+        image={meta.image || 'https://saadfaruque.com/saad_profile.jpg'}
+        article={true}
+        keywords={`${meta.category}, ${meta.tags || ''}, ${seriesTitle}, Saad Faruque, CIO, Cyber Security, Technology`}
+        canonical={`https://saadfaruque.com/blog/${postId}`}
+        author={meta.author || 'Saad Faruque'}
+      />
+      
       <article className={styles.blogPost}>
         <header className={styles.header}>
           <div className={styles.meta}>

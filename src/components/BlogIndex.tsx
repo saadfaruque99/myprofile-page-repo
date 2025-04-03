@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './BlogIndex.module.css';
+import SEO from './SEO';
 import { allBlogPosts, blogSeries } from '../data/blogSeries';
 
 const BlogIndex: React.FC = () => {
@@ -34,6 +35,31 @@ const BlogIndex: React.FC = () => {
       });
   }, [selectedCategory, selectedSeries]);
 
+  // Dynamic SEO metadata based on current filters
+  const seoTitle = useMemo(() => {
+    if (selectedSeries) return `${selectedSeries} Series`;
+    if (selectedCategory) return `${selectedCategory} Articles`;
+    return 'Technical Blog';
+  }, [selectedCategory, selectedSeries]);
+  
+  const seoDescription = useMemo(() => {
+    if (selectedSeries) {
+      const seriesInfo = blogSeries.find(s => s.title === selectedSeries);
+      return seriesInfo?.description || `Explore the complete ${selectedSeries} series by Saad Faruque, covering various aspects of this topic in depth.`;
+    }
+    if (selectedCategory) {
+      return `Browse articles on ${selectedCategory} by Saad Faruque, CIO and Cyber Security Expert with 25+ years of experience.`;
+    }
+    return 'Explore expert articles on Cyber Security, Enterprise IT, LLM Ecosystem, and Technology Leadership by Saad Faruque, CIO with 25+ years of experience.';
+  }, [selectedCategory, selectedSeries]);
+  
+  const seoKeywords = useMemo(() => {
+    const baseKeywords = 'Cyber Security, IT Management, CIO, Technology Leadership';
+    if (selectedSeries) return `${selectedSeries}, Blog Series, ${baseKeywords}`;
+    if (selectedCategory) return `${selectedCategory}, ${baseKeywords}`;
+    return `Technical Blog, Industry Insights, ${baseKeywords}, LLM Ecosystem`;
+  }, [selectedCategory, selectedSeries]);
+
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category === selectedCategory ? '' : category);
   };
@@ -45,6 +71,13 @@ const BlogIndex: React.FC = () => {
 
   return (
     <div className={styles.blogIndexContainer}>
+      <SEO 
+        title={seoTitle}
+        description={seoDescription}
+        keywords={seoKeywords}
+        canonical={`https://saadfaruque.com/blog${location.search}`}
+      />
+      
       <h1>Blog</h1>
       
       <div className={styles.filters}>

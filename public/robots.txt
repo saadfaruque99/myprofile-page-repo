@@ -1,12 +1,12 @@
 # https://www.robotstxt.org/robotstxt.html
+# Allow all web crawlers
 User-agent: *
 Allow: /
-Disallow: /assets/
 
 # Prevent access to sensitive directories
 Disallow: /.git/
 Disallow: /node_modules/
 Disallow: /src/
 
-# Sitemap
-Sitemap: https://myprofile-page-repo.pages.dev/sitemap.xml
+# Sitemap location
+Sitemap: https://saadfaruque.com/sitemap.xml
